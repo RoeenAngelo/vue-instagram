@@ -8,7 +8,7 @@ import Container from "./Container.vue";
 const router = useRouter()
 const searchUsername = ref('')
 
-const isAuthenticated = ref(true)
+const isAuthenticated = ref(false)
 
 
 function onSearch() {
