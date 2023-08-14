@@ -1,6 +1,7 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import {supabase} from "../supabase"
+import { message } from 'ant-design-vue';
 
 export const useStoreUser = defineStore('users', () => {
   const user = ref(null);
@@ -32,7 +33,7 @@ export const useStoreUser = defineStore('users', () => {
 /*
   Sign up
 */  
-  function handleSignup(credentials) {
+  async function handleSignup(credentials) {
     const { email, password, username } = credentials
 
     if(password.length < 6) {
@@ -48,6 +49,31 @@ export const useStoreUser = defineStore('users', () => {
     }
 
     errorMessage.value = ''
+
+
+    // Validate if user exists
+    const { data: usernameAlreadyExists } = await supabase
+    .from('users')
+    .select()
+    .eq('username', username)
+    .single()
+  
+    const {error} = await supabase.auth.signUp({
+      email,
+      password
+    })
+
+    if(error){
+      return errorMessage.value = error.message
+    }
+    
+    // Add user details to user table
+    await supabase.from('users').insert({
+      email,
+      username
+    });
+
+
   }  
 
 /*

@@ -58,6 +58,7 @@ function handleOk(e){
         v-model:value="userCredentials.email"
         class="input"
         placeholder="email"
+        type="email"
       />
       <AInput
         v-model:value="userCredentials.password"
