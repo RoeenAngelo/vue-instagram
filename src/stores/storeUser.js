@@ -26,14 +26,53 @@ export const useStoreUser = defineStore('users', () => {
   Login
 */
 
-  function handleLogin() {
+  async function handleLogin(credentials) {
+
+    const { email, password } = credentials
+
+    if(!validateEmail(email)) {
+      return errorMessage.value = "Email is Invalid"
+    }
+    if(!password.length) {
+      return errorMessage.value = "Please enter password"
+    }
+
+    loading.value = true
+
+    // Sign in
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+
+    if (error) {
+      loading.value = false
+      return errorMessage.value = error.message
+    }
+
+    // Fetch user data
+    const { data: existingUser } = await supabase
+    .from('users')
+    .select()
+    .eq('email', email)
+    .single()
     
+    // Update user state
+    user.value = {
+      email: existingUser.email,
+      username: existingUser.username,
+      id: existingUser.id
+    }
+
+    loading.value = false
+    errorMessage.value = ''
   }
 
 /*
   Sign up
 */  
   async function handleSignup(credentials) {
+    
     const { email, password, username } = credentials
 
     if(password.length < 6) {
@@ -48,22 +87,29 @@ export const useStoreUser = defineStore('users', () => {
       return errorMessage.value = "Email is Invalid"
     }
 
-    errorMessage.value = ''
-
+    loading.value = true
 
     // Validate if user exists
-    const { data: usernameAlreadyExists } = await supabase
+    const { data: userWithUsername } = await supabase
     .from('users')
     .select()
     .eq('username', username)
     .single()
-  
+
+    if(userWithUsername){
+      loading.value = false
+      return errorMessage.value = 'Username already exists'
+    }
+
+    errorMessage.value = ''
+
     const {error} = await supabase.auth.signUp({
       email,
       password
     })
 
     if(error){
+      loading.value = false
       return errorMessage.value = error.message
     }
     
@@ -73,22 +119,69 @@ export const useStoreUser = defineStore('users', () => {
       username
     });
 
+    const { data: newUser } = await supabase
+    .from('users')
+    .select()
+    .eq('username', username)
+    .single()
+
+    // Update user state
+    user.value = {
+      id: newUser.id,
+      email: newUser.email,
+      username: newUser.username
+    }
+
+    loading.value = false
 
   }  
 
 /*
   Logout
 */
-  function handleLogout() {
-    
+  async function handleLogout() {
+    await supabase.auth.signOut()
+    user.value = null
   }  
 
 /*
   Get User
 */
-  function getUser() {
+  async function getUser() {
+
+    loadingUser.value = true
+
+    // Fetch user data from Auth
+    const { data } = await supabase.auth.getUser()
+
+    if(!data.user) {
+      loadingUser.value = false
+      return user.value = null
+    }
+
+    // Fetch user data from user table
+    const { data: userWithEmail } = await supabase
+    .from('users')
+    .select()
+    .eq('email', data.user.email)
+    .single()
     
+    // Update user state
+    user.value = {
+      email: userWithEmail.email,
+      username: userWithEmail.username,
+      id: userWithEmail.id,
+    }
+
+    loadingUser.value = false
   }  
+
+/*
+  Clear Error Message
+*/
+  function clearErrorMessage() {
+    errorMessage.value = ''
+  }
 
   return { 
     user,
@@ -96,6 +189,9 @@ export const useStoreUser = defineStore('users', () => {
     handleLogout,
     getUser,
     handleSignup,
-    errorMessage
+    errorMessage,
+    clearErrorMessage,
+    loading,
+    loadingUser
   }
 })

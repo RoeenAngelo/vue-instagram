@@ -4,8 +4,8 @@ import { reactive, ref } from 'vue';
 import { useStoreUser } from '../stores/storeUser';
 
 const storeUser = useStoreUser()
-const { errorMessage, user } = storeToRefs(storeUser)
-const { handleLogin, handleSignup } = storeUser
+const { errorMessage, user, loading } = storeToRefs(storeUser)
+const { handleLogin, handleSignup, clearErrorMessage } = storeUser
 
 const visible = ref(false);
 
@@ -27,9 +27,33 @@ function showModal() {
   visible.value = true
 }
 
-function handleOk(e){
-  handleSignup(userCredentials)
+function clearUserCredentialsInput() {
+    userCredentials.email = ''
+    userCredentials.password = ''
+    userCredentials.username = ''
+    clearErrorMessage()
+}
+
+async function handleOk(e){
+  if(props.isLogin) {
+    await handleLogin({
+      password: userCredentials.password,
+      email: userCredentials.email
+    })
+  }
+  else {
+    await handleSignup(userCredentials)
+    }
+    if(user.value) {
+      clearUserCredentialsInput()
+      visible.value = false
+    }
 };
+
+function handleCancel() {
+  clearUserCredentialsInput()
+  visible.value = false
+}
 
 </script>
 
@@ -42,30 +66,53 @@ function handleOk(e){
     >
       {{ title }}
     </AButton>
-
+    {{ user }}
     <AModal
       v-model:visible="visible"
       :title="title"
       @ok="handleOk"
     >
-      <AInput
-        v-if="!isLogin"
-        v-model:value="userCredentials.username"
-        class="input"
-        placeholder="username"
-      />
-      <AInput
-        v-model:value="userCredentials.email"
-        class="input"
-        placeholder="email"
-        type="email"
-      />
-      <AInput
-        v-model:value="userCredentials.password"
-        class="input"
-        placeholder="password"
-        type="password"
-      />
+      <template #footer>
+        <AButton key="back" @click="handleCancel">Cancel</AButton>
+        <AButton 
+            :disabled="loading" 
+            key="submit" 
+            type="primary" 
+            :loading="loading" 
+            @click="handleOk"
+        >
+            Submit
+        </AButton>
+      </template>
+      <div
+        v-if="!loading"
+        class="input-container"
+      >
+        <AInput
+          v-if="!isLogin"
+          v-model:value="userCredentials.username"
+          class="input"
+          placeholder="username"
+        />
+        <AInput
+          v-model:value="userCredentials.email"
+          class="input"
+          placeholder="email"
+          type="email"
+        />
+        <AInput
+          v-model:value="userCredentials.password"
+          class="input"
+          placeholder="password"
+          type="password"
+        />
+      </div>
+      <div
+        v-else
+        class="spinner"
+      >
+        <ASpin />
+      </div>
       <ATypographyText
         v-if="errorMessage"
         type="danger"
@@ -84,6 +131,17 @@ function handleOk(e){
 
 .input {
   margin-bottom: 5px;
+}
+
+.input-container {
+  height: 120px;
+}
+
+.spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 120px;
 }
 </style>
 
