@@ -1,6 +1,6 @@
 <script setup>
 import { storeToRefs } from 'pinia';
-import { reactive, ref } from 'vue';
+import { onMounted, onUnmounted, reactive, ref } from 'vue';
 import { useStoreUser } from '../stores/storeUser';
 
 const storeUser = useStoreUser()
@@ -54,6 +54,23 @@ function handleCancel() {
   clearUserCredentialsInput()
   visible.value = false
 }
+
+/*
+	Keyboard Control (press enter to sign in)
+  or place @keydown.enter="login(userCredentials.email, userCredentials.password, or userCredentials.username) in the input tags"
+*/
+  function handleKeyboard(e) {
+    if (e.key === 'Enter') handleOk(userCredentials.email, userCredentials.password, userCredentials.username)
+  }
+
+  onMounted(() => {
+    document.addEventListener('keyup', handleKeyboard)
+    })
+
+  onUnmounted(() => {
+  document.removeEventListener('keyup', handleKeyboard)
+
+  })
 
 </script>
 

@@ -121,13 +121,13 @@ export const useStoreUser = defineStore('users', () => {
       username
     });
 
+    // Update user state
     const { data: newUser } = await supabase
     .from('users')
     .select()
     .eq('username', username)
     .single()
 
-    // Update user state
     user.value = {
       id: newUser.id,
       email: newUser.email,
