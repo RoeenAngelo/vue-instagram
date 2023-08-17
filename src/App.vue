@@ -7,6 +7,8 @@ import { useStoreUser } from "./stores/storeUser";
 const storeUser = useStoreUser()
 const { getUser } = storeUser
 
+
+// Fetch user upon render
 onMounted(() => getUser() )
 
 </script>

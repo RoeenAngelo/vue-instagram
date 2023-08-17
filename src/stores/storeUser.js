@@ -7,7 +7,9 @@ export const useStoreUser = defineStore('users', () => {
   const user = ref(null);
   const errorMessage = ref('')
   const loading = ref(false)
-  const loadingUser = ref(false)
+
+  //prevent the SignUp and Profile buttons from rendering while fetching for user
+  const loadingUser = ref(false) 
 
 /*
   Validate Email
@@ -145,7 +147,7 @@ export const useStoreUser = defineStore('users', () => {
   }  
 
 /*
-  Get User
+  Get Logged In User
 */
   async function getUser() {
 
@@ -154,6 +156,7 @@ export const useStoreUser = defineStore('users', () => {
     // Fetch user data from Auth
     const { data } = await supabase.auth.getUser()
 
+    // Reset these states if user is logged out
     if(!data.user) {
       loadingUser.value = false
       return user.value = null

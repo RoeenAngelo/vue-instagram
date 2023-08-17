@@ -9,12 +9,12 @@ const props = defineProps(['posts'])
       v-for="post in props.posts"
       :key="post.id"
       alt=""
-      :src="post.image"
+      :src="`https://cgnluketkpgphrbjjghw.supabase.co/storage/v1/object/public/images/${post.url}`"
     >
   </div>
 </template>
 
-
+https://cgnluketkpgphrbjjghw.supabase.co/storage/v1/object/public/images/public/299309030411
 
 <style lang="scss" scoped>
 .image-gallery-container {

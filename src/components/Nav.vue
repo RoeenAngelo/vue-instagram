@@ -24,6 +24,9 @@ async function handleLogout() {
 	await storeUser.handleLogout()
 }
 
+function goToOwnProfile() {
+	router.push(`/profile/${user.value.username}`)
+}
 
 </script>
 
@@ -46,7 +49,7 @@ async function handleLogout() {
 						<AuthModal :isLogin="true"/>
 					</div>
 					<div v-else class="right-content">
-						<AButton type="primary">Profile</AButton>
+						<AButton @click="goToOwnProfile" type="primary">Profile</AButton>
 						<AButton @click="handleLogout" type="primary">Logout</AButton>
 					</div>
 				</div>
