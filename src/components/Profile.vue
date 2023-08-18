@@ -1,6 +1,6 @@
 <script setup>
 import Container from './Container.vue';
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, reactive, ref, watch } from 'vue';
 import Userbar from './Userbar.vue';
 import ImageGallery from './ImageGallery.vue';
 import { supabase } from '../supabase';
@@ -19,9 +19,18 @@ const user = ref(null) // A user who is not the logged in user
 const loading = ref(false)
 const isFollowing = ref(false)
 
-function updateIsFollowing(follow) {
-  isFollowing.value = follow
-}
+const userInfo = reactive({
+  posts: null,
+  followers: null,
+  following: null
+})
+
+/*
+  Toggle Follow-Following
+*/     
+  function updateIsFollowing(follow) {
+    isFollowing.value = follow
+  }
 
 /*
   Add Newly uploaded photo to latest feed
@@ -62,6 +71,15 @@ function updateIsFollowing(follow) {
 
     await fetchIsFollowing()
 
+    const followerCount = await fetchFollowersCount()
+    const followingCount = await fetchFollowingCount()
+
+    // Update userInfo
+    userInfo.followers = followerCount
+    userInfo.following = followingCount
+    userInfo.posts = posts.value.length
+
+
     loading.value = false
 
   }
@@ -92,6 +110,24 @@ function updateIsFollowing(follow) {
         fetchIsFollowing()
       })
 
+/*
+   Fetch userInfo (posts, followers, following)
+*/
+  async function fetchFollowersCount() {
+    const { count } = await supabase.from('follow')
+    .select('*', { count: 'exact'})
+    .eq('following_id', user.value.id)
+
+    return count
+  }
+
+  async function fetchFollowingCount() {
+    const { count } = await supabase.from('follow')
+    .select('*', { count: 'exact'})
+    .eq('follower_id', user.value.id)
+
+    return count
+  }
 
 </script>
 
@@ -104,11 +140,7 @@ function updateIsFollowing(follow) {
       <Userbar 
         :key="$route.params.username" 
         :user="user"
-        :userInfo="{
-          posts: 5,
-          followers: 500,
-          following: 300
-        }"
+        :userInfo="userInfo"
         :addNewPost=addNewPost
         :isFollowing="isFollowing"
         :updateIsFollowing="updateIsFollowing"

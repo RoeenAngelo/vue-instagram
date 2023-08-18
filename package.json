@@ -12,6 +12,7 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.0.0",
     "ant-design-vue": "^3.2.13",
+    "dotenv": "^16.3.1",
     "pinia": "^2.0.21",
     "vue": "^3.2.38",
     "vue-observe-visibility": "^1.0.0",
