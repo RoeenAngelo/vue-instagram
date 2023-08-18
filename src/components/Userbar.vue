@@ -11,15 +11,32 @@ const { username: profileUsername } = route.params
 const store = useStoreUser()
 const { user } = storeToRefs(store)
 
-const props = defineProps(['user','userInfo','addNewPost', 'isFollowing'])
+const props = defineProps(['user','userInfo','addNewPost', 'isFollowing', 'updateIsFollowing'])
 
-async function followUser() {
-  await supabase.from('follow')
-  .insert({
-    follower_id: user.value.id,
-    following_id: props.user.id
-  })
-}
+
+/*
+  Follow User
+*/
+  async function followUser() {
+    props.updateIsFollowing(true)
+    await supabase.from('follow')
+    .insert({
+      follower_id: user.value.id,
+      following_id: props.user.id
+    })
+  }
+
+ 
+/*
+  Unfollow User
+*/ 
+  async function unfollowUser() {
+    props.updateIsFollowing(false)
+    await supabase.from('follow')
+    .delete()
+    .eq('follower_id', user.value.id)
+    .eq('following_id', props.user.id)
+  }
 
 </script>
 
@@ -36,7 +53,7 @@ async function followUser() {
           <AButton v-if="!props.isFollowing" @click="followUser">
             Follow
           </AButton>
-          <AButton v-else @click="followUser">
+          <AButton v-else @click="unfollowUser">
             Following
           </AButton>
         </div>

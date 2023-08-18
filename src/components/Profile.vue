@@ -15,9 +15,13 @@ const store = useStoreUser()
 const { user: loggedInUser } = storeToRefs(store)
 
 const posts = ref([])
-const user = ref(null)
+const user = ref(null) // A user who is not the logged in user
 const loading = ref(false)
 const isFollowing = ref(false)
+
+function updateIsFollowing(follow) {
+  isFollowing.value = follow
+}
 
 /*
   Add Newly uploaded photo to latest feed
@@ -40,20 +44,19 @@ const isFollowing = ref(false)
     .single()
 
     if(!userData) {
-      loading.value =false
+      loading.value = false
       return user.value = null
     }
     
     user.value = userData
 
 
-    // Fetch posts form posts table (We want the entire array, so we don't use single)
+    // Fetch posts from posts table (We want the entire array, so we don't use single() filter)
     const { data: postsData } = await supabase
     .from('posts')
     .select()
     .eq('owner_id', user.value.id)
     .order('id',{ ascending: false }) // Show latest uploaded photo first
-
 
     posts.value = postsData
 
@@ -77,13 +80,13 @@ const isFollowing = ref(false)
         .eq('following_id', user.value.id)
         .single()
 
-      if(data) {
+        if(data) {
         isFollowing.value = true
-      }
+      } 
     }
   }
   
-  // Since fetchIsFollowing() is being called in fetchData(), there is a chance we may not reach loggedInUser inside fetchIsFollowing, which will make isFolling.value = false. We then need to watch loggedInUser to avoid this
+  // Since fetchIsFollowing() is being called in fetchData(), there is a chance we may not reach loggedInUser inside fetchIsFollowing, which will make isFollowing.value = false. We then need to watch loggedInUser to avoid this
     
     watch(loggedInUser, () => {
         fetchIsFollowing()
@@ -108,6 +111,7 @@ const isFollowing = ref(false)
         }"
         :addNewPost=addNewPost
         :isFollowing="isFollowing"
+        :updateIsFollowing="updateIsFollowing"
       />
       <ImageGallery
         :posts="posts"
