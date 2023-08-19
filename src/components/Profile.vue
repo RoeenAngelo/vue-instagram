@@ -111,7 +111,7 @@ const userInfo = reactive({
       })
 
 /*
-   Fetch userInfo (posts, followers, following)
+   Fetch userInfo (followers, following)
 */
   async function fetchFollowersCount() {
     const { count } = await supabase.from('follow')
@@ -149,7 +149,7 @@ const userInfo = reactive({
         :posts="posts"
       />
     </div>
-    <div v-else class="spinner">
+    <div v-else class="timeline-spinner">
       <ASpin />
     </div>
   </Container>
@@ -163,10 +163,4 @@ const userInfo = reactive({
   padding: 20px 0;
 }
 
-.spinner {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 85vh;
-}
 </style>

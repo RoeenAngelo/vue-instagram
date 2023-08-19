@@ -14,7 +14,6 @@ const props = defineProps(['posts'])
   </div>
 </template>
 
-https://cgnluketkpgphrbjjghw.supabase.co/storage/v1/object/public/images/public/299309030411
 
 <style lang="scss" scoped>
 .image-gallery-container {

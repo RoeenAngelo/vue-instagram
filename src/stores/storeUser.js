@@ -1,20 +1,20 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import {supabase} from "../supabase"
-import { message } from 'ant-design-vue';
 
 export const useStoreUser = defineStore('users', () => {
   const user = ref(null);
   const errorMessage = ref('')
-  const loading = ref(false)
+  const loading = ref(false) //Activates the spinner ASpin from Antd
 
-  //prevent the SignUp and Profile buttons from rendering while fetching for user
+  //prevent the SignUp and Profile buttons or any unwanted component from rendering while fetching for logged in user
   const loadingUser = ref(false) 
+
+
 
 /*
   Validate Email
 */
-
   function validateEmail(email) {
     return String(email)
       .toLowerCase()
