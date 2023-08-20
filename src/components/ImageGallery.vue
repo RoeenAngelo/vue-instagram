@@ -1,6 +1,8 @@
 <script setup>
 
 const props = defineProps(['posts'])
+
+const { VITE_BASE_PHOTO_URL } = import.meta.env
 </script>
 
 <template>
@@ -9,7 +11,7 @@ const props = defineProps(['posts'])
       v-for="post in props.posts"
       :key="post.id"
       alt=""
-      :src="`https://cgnluketkpgphrbjjghw.supabase.co/storage/v1/object/public/images/${post.url}`"
+      :src="`${VITE_BASE_PHOTO_URL}${post.url}`"
     >
   </div>
 </template>
