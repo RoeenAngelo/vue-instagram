@@ -1,8 +1,7 @@
 <script setup>
+const props = defineProps(["posts"]);
 
-const props = defineProps(['posts'])
-
-const { VITE_BASE_PHOTO_URL } = import.meta.env
+const { VITE_BASE_PHOTO_URL } = import.meta.env;
 </script>
 
 <template>
@@ -12,10 +11,9 @@ const { VITE_BASE_PHOTO_URL } = import.meta.env
       :key="post.id"
       alt=""
       :src="`${VITE_BASE_PHOTO_URL}${post.url}`"
-    >
+    />
   </div>
 </template>
-
 
 <style lang="scss" scoped>
 .image-gallery-container {
@@ -27,5 +25,6 @@ const { VITE_BASE_PHOTO_URL } = import.meta.env
 img {
   margin: 5px;
   width: 200px;
+  height: 300px;
 }
 </style>

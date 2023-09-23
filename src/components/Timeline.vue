@@ -1,7 +1,6 @@
 <script setup>
 import Container from './Container.vue';
 import Cards from './Cards.vue';
-import { ref } from 'vue';
 import { useStoreUser } from '../stores/storeUser';
 import { storeToRefs } from 'pinia';
 import LoginMessage from './LoginMessage.vue';

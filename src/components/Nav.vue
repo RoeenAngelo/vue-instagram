@@ -31,7 +31,7 @@ function goToOwnProfile() {
 </script>
 
 <template>
-	<ALayoutHeader>
+	<ALayoutHeader >
 		<Container>
 			<div class="nav-container">
 				<div class="left-content">
@@ -59,9 +59,11 @@ function goToOwnProfile() {
 </template>
 
 <style lang="scss" scoped>
+
 .nav-container {
 	display: flex;
 	justify-content: space-between;
+	background-color: #001529;
 }
 
 .left-content {
@@ -86,7 +88,13 @@ function goToOwnProfile() {
 	button {
 		margin-left: 10px;
 	}
+	
 }
 
+// @media (max-width: 600px) {
+// 			.right-content {
+// 				margin-right: 10px;
+// 		}
+// }
 
 </style>
